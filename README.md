@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Clerk Private Metadata Demo 🔐
 
-## Getting Started
+A high-performance Next.js 15 demonstration dashboard highlighting the difference between accessing **Private Metadata** via the Session Token (Client) versus the Backend API (Server).
 
-First, run the development server:
+![Metadata Dashboard](/app/favicon.ico) <!-- Placeholder for actual screenshot if available -->
 
+## 🚀 Features
+
+- **Approach 1 (JWT Decoding):** Demonstrates ultra-fast, zero-latency access to private metadata by decoding the Clerk Session Token on the client.
+- **Approach 2 (Server Actions):** Demonstrates real-time, fresh data retrieval using Next.js Server Actions and the `@clerk/nextjs` SDK.
+- **Comparison Engine:** Integrated visual comparison of latency, freshness, and scalability between both methods.
+- **Premium UI:** Glassmorphism design, interactive hover states, and consistent dark theme.
+- **Full Payload Inspector:** Toggle to view the entire decoded JWT payload.
+
+## ⚙️ Setup & Configuration
+
+### 1. Environment Variables
+Clone `.env.example` to `.env` and provide your Clerk keys:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Clerk Dashboard Configuration (Crucial)
+For **Approach 1** to work, you must sync your private metadata to the session token:
+1. Go to your [Clerk Dashboard](https://dashboard.clerk.com).
+2. Navigate to **Sessions** -> **Edit** (under Session Token).
+3. Add the following to your JSON claims:
+   ```json
+   {
+     "private_data": "{{user.private_metadata}}"
+   }
+   ```
+4. Save changes.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Add Sample Metadata
+Manually add some private metadata to a test user in the Clerk Dashboard to see it in action:
+```json
+{
+  "role": "secret_agent",
+  "clearance": 5
+}
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠 Tech Stack
 
-## Learn More
+- **Framework:** Next.js 15 (App Router)
+- **Auth:** Clerk (@clerk/nextjs)
+- **Styling:** Tailwind CSS (Modern Glassmorphism)
+- **Icons:** Lucide React
+- **Tools:** jwt-decode
 
-To learn more about Next.js, take a look at the following resources:
+## 📖 Understanding the Methods
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Feature | Approach 1: Session Token | Approach 2: Backend API |
+| :--- | :--- | :--- |
+| **Latency** | Zero (Local Decode) | Network Bound (~100-300ms) |
+| **Freshness** | Stale (Cached in JWT) | Real-time (Always Fresh) |
+| **Setup** | Required in Clerk Dashboard | Standard API Access |
+| **Scalability** | Infinite (No API Hits) | Subject to Clerk Rate Limits |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛹 Getting Started
 
-## Deploy on Vercel
+First, install dependencies:
+```bash
+npm install
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Then, run the development server:
+```bash
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000) to explore the comparison.
